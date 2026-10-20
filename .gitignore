@@ -1,0 +1,19 @@
+# secrets
+.env
+
+# python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# models (tracked by MLflow, not git). data/raw is ignored by DVC itself after `dvc add`
+/models/*
+!/models/.gitkeep
+*.keras
+*.h5
+
+# experiment outputs
+mlruns/
+mlartifacts/
+tuner_dir/

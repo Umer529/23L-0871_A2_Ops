@@ -1,0 +1,12 @@
+.git
+.github
+venv
+data
+mlruns
+mlartifacts
+tuner_dir
+reports
+labs
+.env
+__pycache__
+*.pyc
