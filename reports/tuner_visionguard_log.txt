@@ -1,0 +1,32 @@
+Tuner run log excerpt (src/tune.py)
+
+Total elapsed time: 04h 48m 00s
+trial  dropout  unfrozen_layers  learning_rate  val_loss  val_accuracy  val_auc
+    3      0.2               50         0.0001    0.4014        0.8493   0.9123
+    7      0.3               10         0.0003    0.4854        0.7603   0.8573
+    1      0.2               50         0.0003    0.5085        0.7466   0.8698
+    6      0.2               10         0.0000    0.5730        0.7055   0.7800
+    0      0.4                0         0.0003    0.6498        0.6096   0.6728
+    2      0.3                0         0.0003    0.6507        0.6507   0.6930
+    5      0.1               25         0.0010    0.6872        0.5548   0.5000
+    4      0.5                0         0.0000    0.7430        0.5753   0.6611
+learning_rate: mean val_loss per value (spread=0.2858)
+learning_rate
+0.00003    0.6580
+0.00010    0.4014
+0.00030    0.5736
+0.00100    0.6872
+dropout: mean val_loss per value (spread=0.2487)
+dropout
+0.1    0.6872
+0.2    0.4943
+0.3    0.5680
+0.4    0.6498
+0.5    0.7430
+unfrozen_layers: mean val_loss per value (spread=0.2322)
+unfrozen_layers
+0     0.6811
+10    0.5292
+25    0.6872
+50    0.4550
+Best: {'dropout': 0.2, 'unfrozen_layers': 50, 'learning_rate': 0.0001}

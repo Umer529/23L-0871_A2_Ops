@@ -1,0 +1,4 @@
+,threshold,fpr,tpr,f1
+default 0.5,0.5,0.3231,0.7901,0.7711
+Youden J (max TPR-FPR),0.71,0.1385,0.679,0.7586
+chosen: max TPR with val FPR <= 10%,0.79,0.0923,0.5432,0.6718

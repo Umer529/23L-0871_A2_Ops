@@ -17,3 +17,6 @@ __pycache__/
 mlruns/
 mlartifacts/
 tuner_dir/
+
+# local logs
+logs/

@@ -1,0 +1,24 @@
+{
+  "run": "mobilenetv2_224",
+  "model": "mobilenetv2",
+  "img_size": 224,
+  "batch_size": 32,
+  "lr": 0.001,
+  "ft_lr": 1e-05,
+  "epochs": 30,
+  "ft_epochs": 15,
+  "dropout": null,
+  "unfreeze": null,
+  "no_aug": false,
+  "run_name": null,
+  "stage1_best_epoch": 26,
+  "stage2_best_epoch": 43,
+  "best_epoch": 43,
+  "val_metrics_best": {
+    "accuracy": 0.7397,
+    "auc": 0.8369,
+    "loss": 0.5014,
+    "precision": 0.7529,
+    "recall": 0.7901
+  }
+}
