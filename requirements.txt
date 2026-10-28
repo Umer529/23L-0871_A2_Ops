@@ -1,0 +1,28 @@
+# Development environment for 23L-0871_A2_Ops (Python 3.12)
+# The Docker images get their own slimmer requirements later.
+
+# Deep learning
+tensorflow==2.17.1
+keras-tuner==1.4.7
+
+# Data & plotting
+numpy
+pandas
+pillow
+matplotlib
+scikit-learn
+
+# Experiment tracking & versioning
+mlflow
+dagshub
+dvc
+
+# Web app & database
+flask
+psycopg2-binary
+requests
+python-dotenv
+
+# Testing & linting
+pytest
+flake8
