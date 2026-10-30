@@ -1,0 +1,10 @@
+{
+  "builds": [
+    {
+      "src": "index.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "100mb", "includeFiles": ["model/**", "preprocess.py"] }
+    }
+  ],
+  "routes": [{ "src": "/(.*)", "dest": "index.py" }]
+}

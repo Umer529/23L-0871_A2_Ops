@@ -1,0 +1,10 @@
+# Task 6.4 "before" image, kept only for the size comparison.
+# Full python base (compilers, docs), full `tensorflow` wheel (GPU/CUDA parts included)
+# and pip's download cache left inside the layer.
+FROM python:3.12
+WORKDIR /app
+COPY app/requirements.txt .
+RUN sed -i 's/^tensorflow-cpu==/tensorflow==/' requirements.txt && pip install -r requirements.txt
+COPY src/preprocess.py ./
+COPY app/ ./
+CMD ["python", "main.py"]
