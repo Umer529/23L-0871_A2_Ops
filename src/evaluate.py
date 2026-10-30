@@ -100,7 +100,8 @@ def misclassified_grid(run, y, p, t, out):
         with Image.open(paths[i]) as img:
             ax.imshow(img.convert("RGB"))
         true = "AI" if y[i] else "Real"
-        ax.set_title(f"true={true}  p(AI)={p[i]:.2f}\n{a['width']}x{a['height']} {a['format']} {a['file_size_kb']:.0f}KB",
+        ax.set_title(f"true={true}  p(AI)={p[i]:.2f}\n"
+                     f"{a['width']}x{a['height']} {a['format']} {a['file_size_kb']:.0f}KB",
                      fontsize=9, color="darkred")
         ax.axis("off")
         rows.append({"path": paths[i], "true": true, "p_ai": round(float(p[i]), 3),

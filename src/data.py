@@ -2,15 +2,16 @@
 
 Stages (per image):
   1. read raw bytes from the path in the split CSV
-  2. decode JPEG/PNG to 3-channel uint8 (palette, RGBA and greyscale all become RGB)
-  3. centre-crop to a square, then resize to IMG_SIZE x IMG_SIZE
+  2-3. src/preprocess.py (Pillow): decode, fix EXIF rotation, convert to RGB (palette,
+     RGBA and greyscale all become 3 channels), centre-crop to a square, resize to
+     IMG_SIZE x IMG_SIZE. The SAME function runs in the Flask app and the cloud API.
   4. cache the small uint8 tensors in RAM (decoding 500 MB of large JPEGs every epoch is the bottleneck)
   5. train only: shuffle + random augmentation
   6. batch + prefetch so the CPU prepares the next batch while the model trains
 
 Pixel values leave the pipeline as float32 in [0, 255]. Model-specific scaling
 (/255 for the CNN, [-1, 1] for MobileNetV2) is a layer inside each model, so the
-Flask app can feed the exact same tensor that load_image() produces.
+Flask app / API can feed exactly what decode_and_resize() produces.
 
 Usage (figure of one augmented batch):  python src/data.py
 """
@@ -20,27 +21,23 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 
+from preprocess import IMG_SIZE, decode_and_resize  # noqa: F401  (re-exported)
+
 SPLIT_DIR = Path("data/splits")
-IMG_SIZE = 224
 BATCH_SIZE = 32
 SEED = 42
 CLASS_NAMES = {0: "Real", 1: "AI-generated"}
 
 
-def decode_and_resize(image_bytes, img_size=IMG_SIZE):
-    """Bytes -> (img_size, img_size, 3) float32 in [0, 255]. Shared with the Flask app."""
-    img = tf.io.decode_image(image_bytes, channels=3, expand_animations=False)
-    # centre square crop: no stretching, and the model cannot learn the
-    # aspect ratio (which differs between the two classes) as a shortcut
-    h, w = tf.shape(img)[0], tf.shape(img)[1]
-    side = tf.minimum(h, w)
-    img = tf.image.crop_to_bounding_box(img, (h - side) // 2, (w - side) // 2, side, side)
-    img = tf.image.resize(img, [img_size, img_size], antialias=True)
-    return tf.clip_by_value(img, 0.0, 255.0)
-
-
 def load_image(path, img_size=IMG_SIZE):
-    return decode_and_resize(tf.io.read_file(path), img_size)
+    """Path (str or string tensor) -> float32 tensor. Runs the shared Pillow code inside tf.data."""
+    def _load(p):
+        p = p.decode() if isinstance(p, bytes) else str(p)
+        return decode_and_resize(Path(p).read_bytes(), img_size)
+
+    x = tf.numpy_function(_load, [path], tf.float32)
+    x.set_shape([img_size, img_size, 3])
+    return x
 
 
 def augmenter(seed=SEED):

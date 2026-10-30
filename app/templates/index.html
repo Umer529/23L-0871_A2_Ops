@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Analyse an image{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Is this image AI-generated?</h1>
+  <p class="lead">Upload a photo or artwork and VisionGuard estimates whether it was made by a
+    generative model or captured / painted by a person.</p>
+</section>
+
+<form class="card upload" action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data">
+  <label class="dropzone" for="image">
+    <span class="dz-icon" aria-hidden="true">⇪</span>
+    <span class="dz-title">Choose an image</span>
+    <span class="dz-hint">JPG or PNG, up to {{ '%g' % max_mb }} MB. The image is analysed in memory and never stored.</span>
+    <span class="dz-file" id="chosen">No file chosen</span>
+    <input id="image" name="image" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
+  </label>
+  <button class="btn" type="submit">Analyse image</button>
+</form>
+
+<script>
+  document.getElementById("image").addEventListener("change", function () {
+    document.getElementById("chosen").textContent = this.files.length ? this.files[0].name : "No file chosen";
+  });
+</script>
+{% endblock %}

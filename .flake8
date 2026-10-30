@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 120
+# E402: matplotlib.use("Agg") and sys.path setup must run before some imports
+# E741: "l" is used for "layer" in short comprehensions
+extend-ignore = E402, E741
+exclude = venv, .git, __pycache__, tuner_dir, mlruns

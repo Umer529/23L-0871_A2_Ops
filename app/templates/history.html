@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block content %}
+<section class="hero compact">
+  <h1>Prediction history</h1>
+  <p class="lead">Every analysis is recorded: what was decided, when, by which model, and how confidently.
+    Showing the latest {{ rows|length }} of {{ total }}.</p>
+</section>
+
+{% if rows %}
+<div class="card table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>When (UTC)</th><th>File</th><th>Verdict</th><th>Confidence</th>
+        <th>P(AI)</th><th>Model</th><th>Mode</th><th>Latency</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td class="nowrap">{{ r.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        <td class="file" title="sha256 {{ r.image_sha256 }}">{{ r.filename }}</td>
+        <td><span class="pill {{ 'ai' if r.label == 'AI-generated' else 'real' }}">{{ r.label }}</span></td>
+        <td>{{ '%.1f' % (r.confidence * 100) }}%</td>
+        <td>{{ '%.3f' % r.p_ai }}</td>
+        <td class="nowrap">{{ r.model_name }} {{ r.model_version|ver }}</td>
+        <td>{{ r.inference_mode }}</td>
+        <td>{{ '%.0f' % r.latency_ms }} ms</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card empty">No predictions yet. <a href="{{ url_for('index') }}">Analyse your first image.</a></div>
+{% endif %}
+{% endblock %}

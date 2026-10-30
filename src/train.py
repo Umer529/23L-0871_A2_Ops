@@ -55,12 +55,17 @@ def parse_args():
 
 
 def callbacks(ckpt_path, patience=5, best_so_far=None, extra=()):
-    return [*extra,
+    return [
+        *extra,
         keras.callbacks.EarlyStopping(monitor="val_loss", patience=patience, restore_best_weights=True, verbose=1),
         keras.callbacks.ModelCheckpoint(ckpt_path, monitor="val_loss", save_best_only=True, verbose=1,
                                         initial_value_threshold=best_so_far),  # stage 2 must beat stage 1
         keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=2, min_lr=1e-7, verbose=1),
     ]
+
+
+def n_trainable(model):
+    return sum(int(np.prod(w.shape)) for w in model.trainable_weights)
 
 
 def plot_curves(hist, title, out, epoch_offset=0):
@@ -116,7 +121,8 @@ def train_and_evaluate(a, run, extra):
         model = build_baseline_cnn(a.img_size, a.dropout if a.dropout is not None else 0.4)
         model.compile(optimizer=keras.optimizers.Adam(a.lr), loss=loss, metrics=metrics())
         save_model_tables(model, out_dir)
-        h = model.fit(train_ds, validation_data=val_ds, epochs=a.epochs, callbacks=callbacks(ckpt, patience=7, extra=extra))
+        h = model.fit(train_ds, validation_data=val_ds, epochs=a.epochs,
+                      callbacks=callbacks(ckpt, patience=7, extra=extra))
         hist = h.history
         summary["best_epoch"] = plot_curves(hist, f"{run}: baseline CNN", out_dir / "curves.png")
     else:
@@ -126,15 +132,15 @@ def train_and_evaluate(a, run, extra):
         model.compile(optimizer=keras.optimizers.Adam(a.lr), loss=loss, metrics=metrics())
         save_model_tables(model, out_dir)
         stage1 = [l.name for l in model.layers if l.trainable and l.weights]
-        n_train = lambda m: sum(int(np.prod(w.shape)) for w in m.trainable_weights)
-        stage1_params = n_train(model)
+        stage1_params = n_trainable(model)
         h1 = model.fit(train_ds, validation_data=val_ds, epochs=a.epochs, callbacks=callbacks(ckpt, extra=extra))
         summary["stage1_best_epoch"] = plot_curves(h1.history, f"{run} - stage 1 (backbone frozen, lr={a.lr})",
                                                    out_dir / "curves_stage1.png")
 
         # stage 2: unfreeze the last block, much smaller lr so pretrained features are nudged, not destroyed
         stage2_base = unfreeze_last(base, a.model, a.unfreeze)
-        model.compile(optimizer=keras.optimizers.Adam(a.ft_lr), loss=loss, metrics=metrics())  # recompile so the change takes effect
+        # recompile so the trainable change takes effect
+        model.compile(optimizer=keras.optimizers.Adam(a.ft_lr), loss=loss, metrics=metrics())
         stage2 = [l.name for l in model.layers if l.trainable and l.weights]
         n1 = len(h1.history["loss"])
         h2 = model.fit(train_ds, validation_data=val_ds, epochs=n1 + a.ft_epochs, initial_epoch=n1,
@@ -148,7 +154,7 @@ def train_and_evaluate(a, run, extra):
         (out_dir / "trainable_layers.txt").write_text(
             f"STAGE 1 - trainable layers ({stage1_params:,} params), whole {base.name} frozen:\n  "
             + "\n  ".join(stage1)
-            + f"\n\nSTAGE 2 - trainable top-level layers ({n_train(model):,} params):\n  " + "\n  ".join(stage2)
+            + f"\n\nSTAGE 2 - trainable top-level layers ({n_trainable(model):,} params):\n  " + "\n  ".join(stage2)
             + f"\n\nSTAGE 2 - trainable layers inside {base.name} ({len(stage2_base)}, BatchNorm kept frozen):\n  "
             + "\n  ".join(stage2_base) + "\n",
             encoding="utf-8")
