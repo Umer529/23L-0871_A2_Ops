@@ -20,3 +20,4 @@ tuner_dir/
 
 # local logs
 logs/
+mlflow.db

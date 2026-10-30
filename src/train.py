@@ -2,9 +2,10 @@
 
   python src/train.py --model cnn
   python src/train.py --model mobilenetv2            # stage 1 frozen, stage 2 last block unfrozen
+  python src/train.py --model mobilenetv2 --tracking manual   # + MLflow (Task 3)
 
 Writes models/<run>.keras (best val_loss) and reports/<run>/ (curves, summary,
-layer table, trainable layers, history).
+layer table, trainable layers, history, test metrics, confusion matrix, ROC).
 """
 import argparse
 import json
@@ -17,8 +18,11 @@ import numpy as np
 import pandas as pd
 from tensorflow import keras
 
+import tracking
 from data import SEED, make_dataset
+from evaluate import choose_threshold, predict, save_eval_figures, test_metrics
 from models import build_baseline_cnn, build_transfer_model, unfreeze_last
+
 
 def metrics():
     return [keras.metrics.BinaryAccuracy(name="accuracy"),
@@ -41,11 +45,17 @@ def parse_args():
                    help="unfreeze the last N backbone layers instead of the last block")
     p.add_argument("--no-aug", action="store_true")
     p.add_argument("--run-name", default=None)
-    return p.parse_args()
+    p.add_argument("--tracking", default="none", choices=["none", "manual", "autolog"])
+    p.add_argument("--experiment", default="visionguard")
+    a = p.parse_args()
+    if a.tracking == "autolog" and a.model != "cnn":
+        # autolog re-logs params on every fit(); the two transfer stages would clash
+        p.error("--tracking autolog is supported for the single-stage cnn only")
+    return a
 
 
-def callbacks(ckpt_path, patience=5, best_so_far=None):
-    return [
+def callbacks(ckpt_path, patience=5, best_so_far=None, extra=()):
+    return [*extra,
         keras.callbacks.EarlyStopping(monitor="val_loss", patience=patience, restore_best_weights=True, verbose=1),
         keras.callbacks.ModelCheckpoint(ckpt_path, monitor="val_loss", save_best_only=True, verbose=1,
                                         initial_value_threshold=best_so_far),  # stage 2 must beat stage 1
@@ -85,8 +95,13 @@ def save_model_tables(model, out_dir):
 
 def main():
     a = parse_args()
-    keras.utils.set_random_seed(SEED)  # python, numpy and tensorflow seeds in one call
     run = a.run_name or f"{a.model}_{a.img_size}"
+    with tracking.tracked_run(a.tracking, a.experiment, run, vars(a)) as extra:
+        train_and_evaluate(a, run, extra)
+
+
+def train_and_evaluate(a, run, extra):
+    keras.utils.set_random_seed(SEED)  # python, numpy and tensorflow seeds in one call
     out_dir = Path("reports") / run
     out_dir.mkdir(parents=True, exist_ok=True)
     Path("models").mkdir(exist_ok=True)
@@ -101,7 +116,7 @@ def main():
         model = build_baseline_cnn(a.img_size, a.dropout if a.dropout is not None else 0.4)
         model.compile(optimizer=keras.optimizers.Adam(a.lr), loss=loss, metrics=metrics())
         save_model_tables(model, out_dir)
-        h = model.fit(train_ds, validation_data=val_ds, epochs=a.epochs, callbacks=callbacks(ckpt, patience=7))
+        h = model.fit(train_ds, validation_data=val_ds, epochs=a.epochs, callbacks=callbacks(ckpt, patience=7, extra=extra))
         hist = h.history
         summary["best_epoch"] = plot_curves(hist, f"{run}: baseline CNN", out_dir / "curves.png")
     else:
@@ -113,7 +128,7 @@ def main():
         stage1 = [l.name for l in model.layers if l.trainable and l.weights]
         n_train = lambda m: sum(int(np.prod(w.shape)) for w in m.trainable_weights)
         stage1_params = n_train(model)
-        h1 = model.fit(train_ds, validation_data=val_ds, epochs=a.epochs, callbacks=callbacks(ckpt))
+        h1 = model.fit(train_ds, validation_data=val_ds, epochs=a.epochs, callbacks=callbacks(ckpt, extra=extra))
         summary["stage1_best_epoch"] = plot_curves(h1.history, f"{run} - stage 1 (backbone frozen, lr={a.lr})",
                                                    out_dir / "curves_stage1.png")
 
@@ -123,7 +138,7 @@ def main():
         stage2 = [l.name for l in model.layers if l.trainable and l.weights]
         n1 = len(h1.history["loss"])
         h2 = model.fit(train_ds, validation_data=val_ds, epochs=n1 + a.ft_epochs, initial_epoch=n1,
-                       callbacks=callbacks(ckpt, best_so_far=min(h1.history["val_loss"])))
+                       callbacks=callbacks(ckpt, best_so_far=min(h1.history["val_loss"]), extra=extra))
         summary["stage2_best_epoch"] = plot_curves(h2.history, f"{run} - stage 2 (last block unfrozen, lr={a.ft_lr})",
                                                    out_dir / "curves_stage2.png", epoch_offset=n1)
         hist = {k: h1.history[k] + h2.history[k] for k in h2.history if k in h1.history}
@@ -143,8 +158,19 @@ def main():
     val_metrics = best.evaluate(val_ds, return_dict=True, verbose=0)
     summary["val_metrics_best"] = {k: round(float(v), 4) for k, v in val_metrics.items()}
     pd.DataFrame(hist).to_csv(out_dir / "history.csv", index_label="epoch")
+
+    # threshold from validation, then the test set (Task 3.3 asks for final test metrics per run)
+    yv, pv = predict(best, "val", a.img_size)
+    t, rule, compare = choose_threshold(yv, pv)
+    compare.round(4).to_csv(out_dir / "threshold_choice.csv")
+    yt, pt = predict(best, "test", a.img_size)
+    m = {**test_metrics(yt, pt, t), "threshold_rule": rule}
+    save_eval_figures(run, yt, pt, t, out_dir)
+    (out_dir / "test_metrics.json").write_text(json.dumps(m, indent=2))
+    summary["test_metrics"] = {k: (round(v, 4) if isinstance(v, float) else v) for k, v in m.items()}
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2))
     print(json.dumps(summary, indent=2))
+    tracking.log_results(a.tracking, m, summary["val_metrics_best"], summary, out_dir, best)
 
 
 if __name__ == "__main__":

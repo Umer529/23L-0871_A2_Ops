@@ -65,6 +65,28 @@ def test_metrics(y, p, t):
             "fpr_real_called_ai": rates(y, p, t)[0]}
 
 
+def save_eval_figures(run, y, p, t, out_dir):
+    """Per-run confusion matrix + ROC (used by train.py so every MLflow run carries them)."""
+    fig, ax = plt.subplots(figsize=(4.8, 4.2))
+    ConfusionMatrixDisplay(confusion_matrix(y, (p >= t).astype(int), labels=[0, 1]),
+                           display_labels=["Real", "AI"]).plot(ax=ax, cmap="Blues", colorbar=False)
+    ax.set_title(f"{run} - test (t={t:.2f})")
+    fig.tight_layout()
+    fig.savefig(Path(out_dir) / "confusion_matrix.png", dpi=110)
+    plt.close(fig)
+
+    fpr, tpr, _ = roc_curve(y, p)
+    fig, ax = plt.subplots(figsize=(5, 4.6))
+    ax.plot(fpr, tpr, label=f"AUC={roc_auc_score(y, p):.3f}")
+    ax.plot([0, 1], [0, 1], "k--", lw=1)
+    ax.scatter(*rates(y, p, t)[:2], s=40, color="red", zorder=3, label=f"threshold {t:.2f}")
+    ax.set(xlabel="FPR (real called AI)", ylabel="TPR (AI caught)", title=f"{run} - test ROC")
+    ax.legend(loc="lower right")
+    fig.tight_layout()
+    fig.savefig(Path(out_dir) / "roc_curve.png", dpi=110)
+    plt.close(fig)
+
+
 def misclassified_grid(run, y, p, t, out):
     paths, _ = read_split("test")
     audit = pd.read_csv("reports/audit.csv").set_index("path")
