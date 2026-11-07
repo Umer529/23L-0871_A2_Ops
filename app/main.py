@@ -74,8 +74,7 @@ def create_app(cfg=None, predictor=None, store=None):
 
     @app.get("/health")
     def health():
-        body = {"status": "ok", "inference_mode": predictor.mode, "model_name": predictor.model_name,
-                "model_version": predictor.model_version, "threshold": predictor.threshold}
+        body = {"status": "ok", "inference_mode": predictor.mode}
         try:
             store.ping()
             body["database"] = "ok"
@@ -86,6 +85,8 @@ def create_app(cfg=None, predictor=None, store=None):
                 body["model_api"] = predictor.info().get("status", "?")
             except Exception as e:
                 body.update(status="degraded", model_api=f"error: {type(e).__name__}")
+        body.update(model_name=predictor.model_name, model_version=predictor.model_version,
+                    threshold=predictor.threshold)
         return jsonify(body), 200 if body["status"] == "ok" else 503
 
     @app.errorhandler(UploadError)

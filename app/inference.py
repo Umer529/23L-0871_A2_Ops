@@ -66,7 +66,10 @@ class RemotePredictor:
     def info(self):
         r = self.session.get(f"{self.url}/health", timeout=self.timeout)
         r.raise_for_status()
-        return r.json()
+        info = r.json()
+        self.threshold, self.model_name, self.model_version = (info.get("threshold"), info.get("model_name"),
+                                                               str(info.get("model_version")))
+        return info
 
     def predict(self, image_bytes, filename="upload"):
         t0 = time.perf_counter()

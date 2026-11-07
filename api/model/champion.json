@@ -1,0 +1,6 @@
+{
+  "model_name": "mobilenetv2_224",
+  "version": "pre-registry",
+  "img_size": 224,
+  "threshold": 0.79
+}
