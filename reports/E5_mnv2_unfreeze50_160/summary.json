@@ -1,0 +1,36 @@
+{
+  "run": "E5_mnv2_unfreeze50_160",
+  "model": "mobilenetv2",
+  "img_size": 160,
+  "batch_size": 32,
+  "lr": 0.001,
+  "ft_lr": 0.0001,
+  "epochs": 12,
+  "ft_epochs": 10,
+  "dropout": null,
+  "unfreeze": 50,
+  "no_aug": false,
+  "run_name": "E5_mnv2_unfreeze50_160",
+  "tracking": "manual",
+  "experiment": "visionguard",
+  "stage1_best_epoch": 10,
+  "stage2_best_epoch": 15,
+  "best_epoch": 15,
+  "val_metrics_best": {
+    "accuracy": 0.7808,
+    "auc": 0.885,
+    "loss": 0.4207,
+    "precision": 0.8182,
+    "recall": 0.7778
+  },
+  "test_metrics": {
+    "threshold": 0.74,
+    "accuracy": 0.7075,
+    "precision": 0.88,
+    "recall": 0.5432,
+    "f1": 0.6718,
+    "roc_auc": 0.8294,
+    "fpr_real_called_ai": 0.0909,
+    "threshold_rule": "max TPR with val FPR <= 10%"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "threshold": 0.74,
+  "accuracy": 0.7074829931972789,
+  "precision": 0.88,
+  "recall": 0.5432098765432098,
+  "f1": 0.6717557251908397,
+  "roc_auc": 0.8294051627384961,
+  "fpr_real_called_ai": 0.09090909090909091,
+  "threshold_rule": "max TPR with val FPR <= 10%"
+}

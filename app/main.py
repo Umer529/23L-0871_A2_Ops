@@ -29,7 +29,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 log = logging.getLogger("visionguard")
 
 CAVEAT = ("This verdict is a statistical guess, not proof. On held-out test images the model "
-          "caught about half of AI-generated images and wrongly flagged about 1 in 20 real ones. "
+          "caught about two thirds of AI-generated images and wrongly flagged about 1 in 13 real ones. "
           "Paintings, heavy editing, filters and new generators fool it. Never use it alone to "
           "accuse anyone of faking an image.")
 

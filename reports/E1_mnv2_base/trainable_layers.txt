@@ -1,0 +1,12 @@
+STAGE 1 - trainable layers (1,281 params), whole mobilenetv2_1.00_224 frozen:
+  prob_ai
+
+STAGE 2 - trainable top-level layers (880,321 params):
+  mobilenetv2_1.00_224
+  prob_ai
+
+STAGE 2 - trainable layers inside mobilenetv2_1.00_224 (4, BatchNorm kept frozen):
+  block_16_expand
+  block_16_depthwise
+  block_16_project
+  Conv_1

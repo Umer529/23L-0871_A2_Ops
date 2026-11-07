@@ -1,0 +1,34 @@
+{
+  "run": "E7_cnn_autolog",
+  "model": "cnn",
+  "img_size": 224,
+  "batch_size": 32,
+  "lr": 0.001,
+  "ft_lr": 1e-05,
+  "epochs": 20,
+  "ft_epochs": 15,
+  "dropout": null,
+  "unfreeze": null,
+  "no_aug": false,
+  "run_name": "E7_cnn_autolog",
+  "tracking": "autolog",
+  "experiment": "visionguard",
+  "best_epoch": 17,
+  "val_metrics_best": {
+    "accuracy": 0.6507,
+    "auc": 0.7268,
+    "loss": 0.5991,
+    "precision": 0.6786,
+    "recall": 0.7037
+  },
+  "test_metrics": {
+    "threshold": 0.72,
+    "accuracy": 0.5782,
+    "precision": 0.8519,
+    "recall": 0.284,
+    "f1": 0.4259,
+    "roc_auc": 0.6987,
+    "fpr_real_called_ai": 0.0606,
+    "threshold_rule": "max TPR with val FPR <= 10%"
+  }
+}

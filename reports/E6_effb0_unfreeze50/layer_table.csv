@@ -1,0 +1,7 @@
+layer,type,output_shape,params,trainable
+image,InputLayer,"(None, 224, 224, 3)",0,True
+efficientnet_preprocess,Identity,"(None, 224, 224, 3)",0,True
+efficientnetb0,Functional,"(None, 7, 7, 1280)",4049571,False
+gap,GlobalAveragePooling2D,"(None, 1280)",0,True
+dropout,Dropout,"(None, 1280)",0,True
+prob_ai,Dense,"(None, 1)",1281,True
