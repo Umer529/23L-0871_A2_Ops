@@ -8,7 +8,10 @@
 #   E6 vs E3              backbone MobileNetV2 -> EfficientNetB0
 #   E7                    baseline CNN with MLflow autologging (Task 3.3 second approach)
 # Usage (from the repo root, venv active):  .\run_experiments.ps1
-$ErrorActionPreference = "Stop"
+# "Continue": TensorFlow logs to stderr, which PowerShell 5.1 would otherwise treat as fatal;
+# real failures are caught through $LASTEXITCODE below
+$ErrorActionPreference = "Continue"
+$py = if (Test-Path .\venv\Scripts\python.exe) { ".\venv\Scripts\python.exe" } else { "python" }
 $env:TF_CPP_MIN_LOG_LEVEL = "2"
 $env:MLFLOW_DISABLE_AGENT_HINT = "1"
 $common = @("--tracking", "manual", "--epochs", "12", "--ft-epochs", "10")
@@ -24,9 +27,9 @@ $runs = [ordered]@{
 }
 foreach ($name in $runs.Keys) {
   Write-Host "=== $name ===" -ForegroundColor Cyan
-  python src/train.py @($runs[$name]) @common --run-name $name *> "logs/$name.log"
+  & $py src/train.py @($runs[$name]) @common --run-name $name 2>&1 | Out-File -Encoding utf8 "logs/$name.log"
   if ($LASTEXITCODE -ne 0) { throw "$name failed - see logs/$name.log" }
 }
 Write-Host "=== E7_cnn_autolog ===" -ForegroundColor Cyan
-python src/train.py --model cnn --tracking autolog --epochs 20 --run-name E7_cnn_autolog *> logs/E7_cnn_autolog.log
+& $py src/train.py --model cnn --tracking autolog --epochs 20 --run-name E7_cnn_autolog 2>&1 | Out-File -Encoding utf8 logs/E7_cnn_autolog.log
 Write-Host "All runs done. Next: python src/register.py" -ForegroundColor Green
