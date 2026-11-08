@@ -39,6 +39,8 @@ artifacts:
 logged models: ['model']
 
 === registry: visionguard
-version 2: run=E4_mnv2_unfreeze50_noaug tags={'best_val_auc': '0.9032', 'img_size': '224', 'run_name': 'E4_mnv2_unfreeze50_noaug'} aliases=[]
-version 1: run=E5_mnv2_unfreeze50_160 tags={'best_val_auc': '0.8850', 'img_size': '160', 'run_name': 'E5_mnv2_unfreeze50_160'} aliases=[]
+version 2: run=E4_mnv2_unfreeze50_noaug tags={'best_val_auc': '0.9032', 'img_size': '224', 'run_name': 'E4_mnv2_unfreeze50_noaug'}
+version 1: run=E5_mnv2_unfreeze50_160 tags={'best_val_auc': '0.8850', 'img_size': '160', 'run_name': 'E5_mnv2_unfreeze50_160'}
+get_model_version_by_alias('visionguard', 'champion') -> version 2 (run E4_mnv2_unfreeze50_noaug)
+get_model_version_by_alias('visionguard', 'challenger') -> version 1 (run E5_mnv2_unfreeze50_160)
 toy experiment runs: ['mlp_lr_0.01', 'mlp_lr_0.001']
