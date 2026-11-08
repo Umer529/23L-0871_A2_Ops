@@ -1,0 +1,4 @@
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:41 23L-0871_A2_Ops> curl http://localhost:5000/health
+{"database":"ok","inference_mode":"remote","model_api":"ok","model_name":"visionguard","model_version":"2","status":"ok","threshold":0.67}
+
+[HTTP 200]

@@ -1,0 +1,16 @@
+Task 6.4 - image analysis (2026-10-30)
+
+visionguard-web:unoptimized  5.91GB
+visionguard-web:latest  1.9GB
+
+== visionguard-web:unoptimized - largest layers
+2.9GB	RUN /bin/sh -c sed -i 's/^tensorflow-cpu==/tensorflow==/' requirements.txt && pip install -r requirement
+696MB	RUN /bin/sh -c set -ex;  apt-get update;  apt-get install -y --no-install-recommends   autoconf   automa
+202MB	RUN /bin/sh -c set -eux;  apt-get update;  apt-get install -y --no-install-recommends   git   mercurial 
+134MB	# debian.sh --arch 'amd64' out/ 'trixie' '@1793059200'
+
+== visionguard-web:latest - largest layers
+1.38GB	RUN /bin/sh -c pip install -r requirements.txt # buildkit
+87.7MB	# debian.sh --arch 'amd64' out/ 'trixie' '@1793059200'
+41.4MB	RUN /bin/sh -c set -eux;   savedAptMark="$(apt-mark showmanual)";  apt-get update;  apt-get install -y 
+4.93MB	RUN /bin/sh -c set -eux;  apt-get update;  apt-get install -y --no-install-recommends   ca-certificates

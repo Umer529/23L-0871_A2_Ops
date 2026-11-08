@@ -25,3 +25,7 @@ mlflow.db
 # api/model/ IS committed: it is the 9 MB deployable artifact Vercel builds from on git push
 .vercel/
 api/.vercel/
+
+# report build outputs
+docs/report/report_built.html
+*.pdf

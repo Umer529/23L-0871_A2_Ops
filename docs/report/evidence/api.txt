@@ -1,0 +1,24 @@
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:20 23L-0871_A2_Ops> curl https://23-l-0871-a2-ops.vercel.app/health
+{"img_size":224,"model_name":"visionguard","model_version":"2","runtime":"litert","service":"visionguard-model-api","status":"ok","threshold":0.67}
+   [HTTP 200]
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:20 23L-0871_A2_Ops> curl -F image=@real.jpg https://23-l-0871-a2-ops.vercel.app/predict            (no X-API-Key)
+{"error":"missing or wrong X-API-Key"}
+   [HTTP 401]
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:20 23L-0871_A2_Ops> curl -H 'X-API-Key: <wrong>' -F image=@real.jpg https://23-l-0871-a2-ops.vercel.app/predict
+{"error":"missing or wrong X-API-Key"}
+   [HTTP 401]
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:20 23L-0871_A2_Ops> curl -H 'X-API-Key: ***' -F image=@2022-11-10-image-12.jpg https://23-l-0871-a2-ops.vercel.app/predict
+{"confidence":0.9957232475280762,"inference_ms":118.0309089999696,"label":"AI-generated","model_name":"visionguard","model_version":"2","p_ai":0.9957232475280762,"threshold":0.67}
+   [HTTP 200, 2.933149s]
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:20 23L-0871_A2_Ops> curl -H 'X-API-Key: ***' -F image=@homepage-usp-photo-2_600x.jpg https://23-l-0871-a2-ops.vercel.app/predict
+{"confidence":0.9841603096574545,"inference_ms":32.87670999998227,"label":"Real","model_name":"visionguard","model_version":"2","p_ai":0.01583969034254551,"threshold":0.67}
+   [HTTP 200, 1.926450s]
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:20 23L-0871_A2_Ops> curl -H 'X-API-Key: ***' -F image=@1344278.jpg https://23-l-0871-a2-ops.vercel.app/predict
+{"confidence":0.9006248712539673,"inference_ms":34.268891000010626,"label":"AI-generated","model_name":"visionguard","model_version":"2","p_ai":0.9006248712539673,"threshold":0.67}
+   [HTTP 200, 2.757553s]
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:20 23L-0871_A2_Ops> curl -H 'X-API-Key: ***' -F image=@180222162827-the-kiss-story-top-card-image.jpg https://23-l-0871-a2-ops.vercel.app/predict
+{"confidence":0.9611950553953648,"inference_ms":16.441524000015306,"label":"Real","model_name":"visionguard","model_version":"2","p_ai":0.03880494460463524,"threshold":0.67}
+   [HTTP 200, 1.488170s]
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:20 23L-0871_A2_Ops> curl -H 'X-API-Key: ***' -F image=@fake.jpg https://23-l-0871-a2-ops.vercel.app/predict
+{"error":"file could not be decoded as an image"}
+   [HTTP 422]

@@ -1,0 +1,13 @@
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:44 23L-0871_A2_Ops> docker compose ps
+NAME                IMAGE                    COMMAND                  SERVICE   CREATED        STATUS                        PORTS
+visionguard-db-1    postgres:16-alpine       "docker-entrypoint.s…"   db        9 days ago     Up 9 hours (healthy)          5432/tcp
+visionguard-web-1   visionguard-web:latest   "python main.py"         web       24 hours ago   Up About a minute (healthy)   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp
+
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:44 23L-0871_A2_Ops> docker compose port db 5432
+:0
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:45 23L-0871_A2_Ops> Test-NetConnection localhost -Port 5432   (from the host)
+TcpTestSucceeded : False   -> port 5432 is closed from outside
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:47 23L-0871_A2_Ops> docker compose exec web python -c "import socket; print(socket.gethostbyname('db'))"   (internal network)
+db -> 172.20.0.2
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:47 23L-0871_A2_Ops> docker inspect visionguard-db-1 --format '{{json .State.Health.Status}}'
+"healthy"

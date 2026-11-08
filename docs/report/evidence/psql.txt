@@ -1,0 +1,27 @@
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:42 23L-0871_A2_Ops> docker compose exec db psql -U visionguard -d visionguard -c "SELECT id, created_at, label, confidence, model_name, model_version, inference_mode, latency_ms FROM predictions ORDER BY id"
+ id |     created_utc     |    label     | conf  |   model_name    |     ver      |  mode  |  ms  
+----+---------------------+--------------+-------+-----------------+--------------+--------+------
+  1 | 2026-10-30 11:05:21 | AI-generated | 0.996 | mobilenetv2_224 | pre-registry | local  |  313
+  2 | 2026-10-30 11:05:21 | Real         | 0.986 | mobilenetv2_224 | pre-registry | local  |  181
+  3 | 2026-10-30 11:05:40 | AI-generated | 0.996 | mobilenetv2_224 | pre-registry | local  |  175
+  4 | 2026-11-07 17:50:07 | AI-generated | 0.996 | mobilenetv2_224 | pre-registry | remote | 2490
+  5 | 2026-11-07 17:50:09 | Real         | 0.986 | mobilenetv2_224 | pre-registry | remote | 1306
+  6 | 2026-11-08 17:36:52 | AI-generated | 0.996 | visionguard     | 2            | remote | 2217
+  7 | 2026-11-08 17:36:54 | Real         | 0.984 | visionguard     | 2            | remote | 1089
+  8 | 2026-11-08 17:36:57 | AI-generated | 0.901 | visionguard     | 2            | remote | 1801
+  9 | 2026-11-08 17:36:59 | Real         | 0.961 | visionguard     | 2            | remote |  970
+(9 rows)
+
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:42 23L-0871_A2_Ops> docker compose exec db psql ... -c "SELECT model_version, label, count(*), round(avg(confidence)::numeric,3) FROM predictions GROUP BY 1,2"
+ model_version |    label     | count | avg_conf 
+---------------+--------------+-------+----------
+ 2             | AI-generated |     2 |    0.948
+ 2             | Real         |     2 |    0.973
+ pre-registry  | AI-generated |     3 |    0.996
+ pre-registry  | Real         |     2 |    0.986
+(4 rows)
+
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:43 23L-0871_A2_Ops> docker volume ls --filter name=pgdata
+DRIVER    VOLUME NAME
+local     l2check_pgdata
+local     visionguard_pgdata

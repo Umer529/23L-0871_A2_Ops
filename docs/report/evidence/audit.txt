@@ -1,0 +1,31 @@
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:16 23L-0871_A2_Ops> python src/audit.py
+
+=== Images per class ===
+class
+AiArtData    539
+RealArt      436
+
+=== Width / height / file size (KB) per class: min, median, max ===
+          width               height              file_size_kb               
+            min  median   max    min median   max          min median     max
+class                                                                        
+AiArtData   225  1024.0  6000    135  800.0  4001         11.5  195.1  5494.3
+RealArt     183   920.0  8495    158  720.0  7091         11.0  141.4  9956.4
+
+=== Colour mode per class ===
+mode       L   P  RGB  RGBA
+class                      
+AiArtData  1  14  489    35
+RealArt    6   9  407    14
+
+=== Format per class ===
+format     JPEG  PNG
+class               
+AiArtData   429  110
+RealArt     403   33
+
+Corrupt / unreadable files: 0
+Exact duplicate files (extra copies): 1
+Hashes appearing in BOTH classes: 0
+
+Full table saved to reports\audit.csv

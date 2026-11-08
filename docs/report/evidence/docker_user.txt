@@ -1,0 +1,8 @@
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:43 23L-0871_A2_Ops> docker compose exec web whoami
+appuser
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:43 23L-0871_A2_Ops> docker compose exec web id
+uid=10001(appuser) gid=10001(appuser) groups=10001(appuser)
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:44 23L-0871_A2_Ops> docker compose exec web python -c "import os, pwd; print(pwd.getpwuid(os.getuid()).pw_name)"  (uid of the app process)
+process uid 10001 -> appuser
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:44 23L-0871_A2_Ops> docker image inspect visionguard-web --format '{{.Config.User}}'
+appuser

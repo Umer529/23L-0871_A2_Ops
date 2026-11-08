@@ -1,0 +1,37 @@
+### BREAK: start web with a wrong database password (db keeps the real one)
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:37:58 23L-0871_A2_Ops> set POSTGRES_PASSWORD=wrong-password && docker compose up -d --no-deps web
+ Container visionguard-web-1 Recreate 
+ Container visionguard-web-1 Recreated 
+ Container visionguard-web-1 Starting 
+ Container visionguard-web-1 Started 
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:38:27 23L-0871_A2_Ops> docker compose ps web
+NAME                IMAGE                    COMMAND            SERVICE   CREATED          STATUS                            PORTS
+visionguard-web-1   visionguard-web:latest   "python main.py"   web       29 seconds ago   Up 6 seconds (health: starting)   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:38:27 23L-0871_A2_Ops> curl -s -o NUL -w %{http_code} http://localhost:5000/health
+000  (no answer: app not started)
+
+### DIAGNOSE from the logs only
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:38:27 23L-0871_A2_Ops> docker compose logs web --tail 8
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "db" (172.20.0.2), port 5432 failed: FATAL:  password authentication failed for user "visionguard"
+
+(Background on this error at: https://sqlalche.me/e/21/e3q8)
+2026-11-08 17:38:21,955 INFO visionguard: starting waitress on 0.0.0.0:5000 (debug off)
+2026-11-08 17:38:22,008 ERROR db: database not reachable (attempt 1/10): (psycopg2.OperationalError) connection to server at "db" (172.20.0.2), port 5432 failed: FATAL:  password authentication failed for user "visionguard"
+2026-11-08 17:38:24,017 ERROR db: database not reachable (attempt 2/10): (psycopg2.OperationalError) connection to server at "db" (172.20.0.2), port 5432 failed: FATAL:  password authentication failed for user "visionguard"
+2026-11-08 17:38:26,023 ERROR db: database not reachable (attempt 3/10): (psycopg2.OperationalError) connection to server at "db" (172.20.0.2), port 5432 failed: FATAL:  password authentication failed for user "visionguard"
+
+### FIX: recreate web with the value from .env
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:38:27 23L-0871_A2_Ops> docker compose up -d --no-deps web
+ Container visionguard-web-1 Recreate 
+ Container visionguard-web-1 Recreated 
+ Container visionguard-web-1 Starting 
+ Container visionguard-web-1 Started 
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:38:35 23L-0871_A2_Ops> docker compose logs web --tail 4
+2026-11-08 17:38:32,438 INFO visionguard: starting waitress on 0.0.0.0:5000 (debug off)
+2026-11-08 17:38:32,498 INFO db: database ready: postgresql+psycopg2://visionguard:***@db:5432/visionguard
+2026-11-08 17:38:32,499 INFO visionguard: model ready: mode=remote name=remote version=? threshold=None
+2026-11-08 17:38:32,501 INFO waitress: Serving on http://0.0.0.0:5000
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:38:35 23L-0871_A2_Ops> curl http://localhost:5000/health
+{"database":"ok","inference_mode":"remote","model_api":"ok","model_name":"remote","model_version":"?","status":"ok","threshold":null}
+

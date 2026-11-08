@@ -1,0 +1,9 @@
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:19 23L-0871_A2_Ops> python src/predict_by_alias.py data/raw/AiArtData/1344278.jpg
+MLflow tracking -> https://dagshub.com/Umer529/23L-0871_A2_Ops.mlflow
+loaded models:/visionguard@champion -> version 2 (run E4_mnv2_unfreeze50_noaug, img_size=224, threshold=0.67)
+{"image": "data/raw/AiArtData/1344278.jpg", "p_ai": 0.9006, "threshold": 0.67, "label": "AI-generated"}
+
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:19 23L-0871_A2_Ops> python app/predict_cli.py <known AI image> <known real image>
+model loaded once in 7.17s: visionguard v2, img_size=224, threshold=0.67
+AiArtData/2022-11-10-image-12.jpg                  -> AI-generated  confidence=0.996  p_ai=0.996  283 ms
+RealArt/homepage-usp-photo-2_600x.jpg            -> Real          confidence=0.984  p_ai=0.016  208 ms

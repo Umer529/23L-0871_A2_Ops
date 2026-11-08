@@ -1,0 +1,44 @@
+MLflow tracking -> https://dagshub.com/Umer529/23L-0871_A2_Ops.mlflow
+experiment: visionguard 1
+
+=== run E4_mnv2_unfreeze50_noaug (manual) id=7ffb4798bf2b47cebf7446ea39b117f3
+tags: {'git_commit': 'b236da608816154ea5e4dbe22ef0828f6719f06a', 'git_dirty': 'False', 'dvc_data_version': '8f23d6dc9b06d363c3981642c50856c0.dir', 'seed': '42', 'tracking_mode': 'manual', 'model_family': 'mobilenetv2', 'threshold_rule': 'max TPR with val FPR <= 10%'}
+params (13): ['batch_size', 'dropout', 'epochs', 'experiment', 'ft_epochs', 'ft_lr', 'img_size', 'lr', 'model', 'no_aug', 'run_name', 'tracking', 'unfreeze']
+metrics (24): ['accuracy', 'auc', 'best_epoch', 'best_val_accuracy', 'best_val_auc', 'best_val_loss', 'best_val_precision', 'best_val_recall', 'learning_rate', 'loss', 'precision', 'recall', 'test_accuracy', 'test_f1', 'test_fpr_real_called_ai', 'test_precision', 'test_recall', 'test_roc_auc', 'test_threshold', 'val_accuracy', 'val_auc', 'val_loss', 'val_precision', 'val_recall']
+val_loss history points: 20
+artifacts:
+- environment/
+  - pip_freeze.txt
+- reports/
+  - confusion_matrix.png
+  - curves.png
+  - curves_stage1.png
+  - curves_stage2.png
+  - history.csv
+  - layer_table.csv
+  - model_summary.txt
+  - roc_curve.png
+  - summary.json
+  - test_metrics.json
+  - threshold_choice.csv
+  - trainable_layers.txt
+- splits/
+  - .gitkeep
+  - test.csv
+  - train.csv
+  - val.csv
+logged models: ['model']
+
+=== run E7_cnn_autolog (autolog) id=c92f12b2f68e46d29dac08593305545a
+tags: {'git_commit': 'b236da608816154ea5e4dbe22ef0828f6719f06a', 'git_dirty': 'False', 'dvc_data_version': '8f23d6dc9b06d363c3981642c50856c0.dir', 'seed': '42', 'tracking_mode': 'autolog', 'model_family': 'cnn', 'threshold_rule': 'max TPR with val FPR <= 10%'}
+params (31): ['baseline', 'batch_size', 'class_weight', 'epochs', 'initial_epoch', 'min_delta', 'monitor', 'opt_amsgrad', 'opt_beta_1', 'opt_beta_2', 'opt_clipnorm', 'opt_clipvalue', 'opt_ema_momentum', 'opt_ema_overwrite_frequency', 'opt_epsilon', 'opt_global_clipnorm', 'opt_gradient_accumulation_steps', 'opt_learning_rate', 'opt_loss_scale_factor', 'opt_name', 'opt_use_ema', 'opt_weight_decay', 'patience', 'restore_best_weights', 'sample_weight', 'shuffle', 'steps_per_epoch', 'validation_batch_size', 'validation_freq', 'validation_split', 'validation_steps']
+metrics (29): ['accuracy', 'auc', 'best_epoch', 'best_val_accuracy', 'best_val_auc', 'best_val_loss', 'best_val_precision', 'best_val_recall', 'learning_rate', 'loss', 'precision', 'recall', 'test_accuracy', 'test_f1', 'test_fpr_real_called_ai', 'test_precision', 'test_recall', 'test_roc_auc', 'test_threshold', 'val_accuracy', 'val_auc', 'val_loss', 'val_precision', 'val_recall', 'validation_accuracy', 'validation_auc', 'validation_loss', 'validation_precision', 'validation_recall']
+val_loss history points: 20
+artifacts:
+- model_summary.txt
+logged models: ['model']
+
+=== registry: visionguard
+version 2: run=E4_mnv2_unfreeze50_noaug tags={'best_val_auc': '0.9032', 'img_size': '224', 'run_name': 'E4_mnv2_unfreeze50_noaug'} aliases=[]
+version 1: run=E5_mnv2_unfreeze50_160 tags={'best_val_auc': '0.8850', 'img_size': '160', 'run_name': 'E5_mnv2_unfreeze50_160'} aliases=[]
+toy experiment runs: ['mlp_lr_0.01', 'mlp_lr_0.001']

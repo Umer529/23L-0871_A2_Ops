@@ -1,0 +1,21 @@
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:16 23L-0871_A2_Ops> python src/split.py
+train:  681 images  (AI=376, real=305)
+val  :  146 images  (AI=81, real=65)
+test :  147 images  (AI=81, real=66)
+
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:16 23L-0871_A2_Ops> type data\raw.dvc
+outs:
+- md5: 8f23d6dc9b06d363c3981642c50856c0.dir
+  size: 503783378
+  nfiles: 975
+  hash: md5
+  path: raw
+
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:16 23L-0871_A2_Ops> dvc remote list
+origin  https://dagshub.com/Umer529/23L-0871_A2_Ops.dvc (default)
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:16 23L-0871_A2_Ops> dvc status -c
+Cache and remote 'origin' are in sync.
+HP Elidebook 840 G8@DESKTOP-EU2DK6Q 2026-11-08 22:16 23L-0871_A2_Ops> git check-ignore -v .env .dvc/config.local data/raw
+.gitignore:2:.env	.env
+.dvc/.gitignore:1:/config.local	.dvc/config.local
+data/.gitignore:1:/raw	data/raw
